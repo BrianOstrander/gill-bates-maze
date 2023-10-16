@@ -299,6 +299,7 @@ namespace GillBates.Controller
 
         public void OnClickCheesePowerReset()
         {
+            cheesePowerSlider.value = cheesePowerDefault;
             OnUpdateCheesePower(cheesePowerDefault);
         }
 
