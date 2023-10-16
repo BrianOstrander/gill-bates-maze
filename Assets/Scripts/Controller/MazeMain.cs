@@ -1,17 +1,18 @@
+using System;
 using GillBates.Data;
 using GillBates.View;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace GillBates.Controller
 {
     public class MazeMain : MonoBehaviour
     {
-
         /// <summary>
         /// The default maze.
         /// </summary>
         [SerializeField, TextArea]
-        string textInput;
+        string defaultInput;
 
         /// <summary>
         /// The maximum distance the "smell" of the cheese will permeate the maze. If it is too small then
@@ -35,6 +36,15 @@ namespace GillBates.Controller
         [SerializeField]
         Camera mazeCamera;
 
+        [SerializeField]
+        GameObject controlPanel;
+
+        [SerializeField]
+        PopupBehaviour popup;
+        
+        [SerializeField]
+        int restartSceneIndex;
+        
         /// <summary>
         /// How long to weight between ticks of the simulation. Setting this to zero will update it every frame.
         /// </summary>
@@ -44,14 +54,44 @@ namespace GillBates.Controller
         Maze maze;
         Vector2Int beginPosition;
         Vector2Int endPosition;
+        bool isDefaultInput;
         float tickDelayRemaining;
 
         MouseController mouse;
-        
+
         void Awake()
         {
+            controlPanel.SetActive(false);
+            popup.Close();
+            
+            var input = defaultInput;
+            isDefaultInput = true;
+            
+            if (PersistantData.IsLoadingFromCache.Value)
+            {
+                input = PersistantData.CachedMaze.Value;
+                PersistantData.IsLoadingFromCache.Value = false;
+                isDefaultInput = false;
+            }
+
+            try
+            {
+                Initialize(input);
+            }
+            catch (Exception ex)
+            {
+                Debug.LogException(ex);
+                OnError();
+                return;
+            }
+            
+            controlPanel.SetActive(true);
+        }
+
+        void Initialize(string input)
+        {
             maze = new Maze();
-            maze.Load(textInput);
+            maze.Load(input);
             
             // Since I'm treating this problem as a solution prototype, I'm simplifying the problem by making
             // walls into solid cells, thus the begin and end positions would be calculated as follows:
@@ -94,7 +134,7 @@ namespace GillBates.Controller
                 }
             }
 
-            var cheeseView = Instantiate(
+            Instantiate(
                 cheesePrefab,
                 new Vector3(
                     endPosition.x,
@@ -162,7 +202,16 @@ namespace GillBates.Controller
             }
 
             tickDelayRemaining = tickDelay;
-            Tick();
+
+            try
+            {
+                Tick();
+            }
+            catch (Exception ex)
+            {
+                Debug.LogException(ex);
+                OnError();
+            }
         }
 
         void Tick()
@@ -176,6 +225,51 @@ namespace GillBates.Controller
             }
             
             mouse.Tick();
+        }
+        
+        public void OnClickRestart()
+        {
+            PersistantData.IsLoadingFromCache.Value = false;
+            OnRestart();
+        }
+        
+        public void OnClickPasteAndRestart()
+        {
+            PersistantData.IsLoadingFromCache.Value = true;
+            PersistantData.CachedMaze.Value = GUIUtility.systemCopyBuffer;
+            OnRestart();
+        }
+
+        void OnRestart()
+        {
+            controlPanel.SetActive(false);
+            SceneManager.LoadScene(restartSceneIndex);
+        }
+
+        void OnError()
+        {
+            enabled = false;
+            controlPanel.SetActive(false);
+            
+            string title;
+            string description;
+
+            if (isDefaultInput)
+            {
+                title = "Oops!";
+                description = "We made a mistake, lets try this again!";
+            }
+            else
+            {
+                title = "Oops! Invalid Maze";
+                description = "That maze was a real head scratcher... Try copying a different one to your clipboard next time! Can I show you one that works?";
+            }
+                
+            popup.Open(
+                title,
+                description,
+                OnClickRestart
+            );
         }
     }
 }
