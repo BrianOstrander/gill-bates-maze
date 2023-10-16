@@ -7,9 +7,16 @@ namespace GillBates.Controller
     public class MazeMain : MonoBehaviour
     {
 
+        /// <summary>
+        /// The default maze.
+        /// </summary>
         [SerializeField, TextArea]
         string textInput;
 
+        /// <summary>
+        /// The maximum distance the "smell" of the cheese will permeate the maze. If it is too small then
+        /// our poor mouse won't find the cheese!
+        /// </summary>
         [SerializeField]
         int cheesePowerMax;
         
@@ -28,6 +35,9 @@ namespace GillBates.Controller
         [SerializeField]
         Transform cameraRoot;
 
+        /// <summary>
+        /// How long to weight between ticks of the simulation. Setting this to zero will update it every frame.
+        /// </summary>
         [SerializeField]
         float tickDelay;
         

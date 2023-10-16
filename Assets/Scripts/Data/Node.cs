@@ -12,6 +12,10 @@ namespace GillBates.Data
         public bool IsSolid { get; private set; }
 
         int cheesePower;
+        
+        /// <summary>
+        /// The higher the cheese power, the closer we are to the cheese!
+        /// </summary>
         public int CheesePower
         {
             get => cheesePower;
@@ -27,6 +31,9 @@ namespace GillBates.Data
             }
         }
 
+        /// <summary>
+        /// Cheese power spreads from the cheese, everytime a node's cheese power is updated this is called.
+        /// </summary>
         public event Action<int> CheesePowerUpdate;
         
         public Node(
@@ -64,6 +71,14 @@ namespace GillBates.Data
             );
         }
         
+        /// <summary>
+        /// From the directions provided, get the neighbor with the highest cheese power.
+        /// </summary>
+        /// <remarks>
+        /// The higher the cheese power, the closer we are to the cheese!
+        /// </remarks>
+        /// <param name="directions"></param>
+        /// <returns>The highest cheese power from neighbors in the provided directions</returns>
         int GetMaximumNeighborCheesePower(params Directions[] directions)
         {
             var result = 0;
@@ -82,6 +97,13 @@ namespace GillBates.Data
             return result;
         }
         
+        /// <summary>
+        /// Try to get a non-solid neighbor to the direction provided.
+        /// </summary>
+        /// <param name="direction"></param>
+        /// <param name="neighbor"></param>
+        /// <returns>True if a non-solid neighbor exists in the direction provided, otherwise false.</returns>
+        /// <exception cref="ArgumentOutOfRangeException"></exception>
         public bool TryGetNeighbor(
             Directions direction,
             out Node neighbor

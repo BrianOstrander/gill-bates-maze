@@ -59,6 +59,12 @@ namespace GillBates.Data
             );
         }
         
+        /// <summary>
+        /// Try to get the node at the provided position.
+        /// </summary>
+        /// <param name="position"></param>
+        /// <param name="node"></param>
+        /// <returns>True if a non-solid node exists at the position provided, otherwise false.</returns>
         public bool TryGetNode(
             Vector2Int position,
             out Node node

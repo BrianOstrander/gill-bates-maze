@@ -14,6 +14,11 @@ namespace GillBates.View
 
         public bool IsMoving => moveElapsed.HasValue;
         
+        /// <summary>
+        /// Move the mouse to the provided world position. 
+        /// </summary>
+        /// <param name="position"></param>
+        /// <param name="isInstant"></param>
         public void Move(
             Vector3 position,
             bool isInstant = false

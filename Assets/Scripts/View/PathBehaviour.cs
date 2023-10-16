@@ -13,7 +13,6 @@ namespace GillBates.View
         
         int cheesePowerMax;
         
-        
         public void Initialize(
             Node node,
             int cheesePowerMax

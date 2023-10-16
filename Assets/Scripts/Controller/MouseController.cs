@@ -64,6 +64,14 @@ namespace GillBates.Controller
             );
         }
 
+        /// <summary>
+        /// From the provided directions, try to find the first neighbor with a higher cheese power than our current
+        /// node.
+        /// </summary>
+        /// <param name="neighbor"></param>
+        /// <param name="directions"></param>
+        /// <returns>True if a neighbor with a higher cheese power is found, otherwise false.</returns>
+        /// <exception cref="Exception"></exception>
         bool TryGetBestNeighbor(
             out Node neighbor,
             params Directions[] directions
