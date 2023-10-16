@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -8,9 +7,6 @@ namespace GillBates.Controller
     {
         [SerializeField]
         int mainSceneIndex;
-
-        [SerializeField]
-        int restartSceneIndex;
         
         void Update()
         {
@@ -21,7 +17,6 @@ namespace GillBates.Controller
 
             enabled = false;
             SceneManager.LoadScene(mainSceneIndex);
-            // SceneManager.UnloadSceneAsync(restartSceneIndex);
         }
     }
 }
