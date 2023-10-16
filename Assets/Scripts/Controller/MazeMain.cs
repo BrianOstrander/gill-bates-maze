@@ -33,7 +33,7 @@ namespace GillBates.Controller
         MouseBehaviour mousePrefab;
 
         [SerializeField]
-        Transform cameraRoot;
+        Camera mazeCamera;
 
         /// <summary>
         /// How long to weight between ticks of the simulation. Setting this to zero will update it every frame.
@@ -66,10 +66,15 @@ namespace GillBates.Controller
                 maze.Size.y - 2
             );
             
-            cameraRoot.position = new Vector3(
+            mazeCamera.transform.position = new Vector3(
                 endPosition.x / 2f,
                 endPosition.y / 2f,
-                cameraRoot.position.z
+                mazeCamera.transform.position.z
+            );
+
+            mazeCamera.orthographicSize = 0.5f * Mathf.Max(
+                maze.Size.x,
+                maze.Size.y
             );
             
             for (var y = 0; y < maze.Size.y; y++)

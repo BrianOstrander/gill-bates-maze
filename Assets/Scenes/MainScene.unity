@@ -136,7 +136,7 @@ GameObject:
   - component: {fileID: 519420029}
   - component: {fileID: 519420030}
   m_Layer: 0
-  m_Name: Main Camera
+  m_Name: MazeCamera
   m_TagString: MainCamera
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -384,7 +384,7 @@ MonoBehaviour:
   pathPrefab: {fileID: -1295386709754892579, guid: f14a60d68b9bb4f0cbad4a8129a2d6c0, type: 3}
   cheesePrefab: {fileID: 4686956115284089203, guid: 451672e36dbb540dcadecbb39b111791, type: 3}
   mousePrefab: {fileID: -6414310442517489542, guid: 0c7b8f235a6fd4b9bbb0140db3d34cfa, type: 3}
-  cameraRoot: {fileID: 519420032}
+  mazeCamera: {fileID: 519420031}
   tickDelay: 0
 --- !u!4 &1068137345
 Transform:
