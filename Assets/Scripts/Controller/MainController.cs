@@ -6,8 +6,9 @@ using UnityEngine.SceneManagement;
 
 namespace GillBates.Controller
 {
-    public class MazeMain : MonoBehaviour
+    public class MainController : MonoBehaviour
     {
+        
         /// <summary>
         /// The default maze.
         /// </summary>
