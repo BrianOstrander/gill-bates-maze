@@ -20,6 +20,16 @@ namespace GillBates.Controller
             this.maze = maze;
             position = beginPosition;
             this.view = view;
+            
+            var beginPositionWorld = new Vector3(
+                beginPosition.x,
+                maze.Size.y - beginPosition.y
+            );
+            
+            view.Move(
+                beginPositionWorld,
+                true
+            );
         }
 
         public void Tick()
@@ -42,9 +52,15 @@ namespace GillBates.Controller
                 return;
             }
 
+            position = neighbor.Position;
+
             var movePosition = new Vector3(
-                neighbor.Position.x,
-                neighbor.Position.y
+                position.x,
+                maze.Size.y - position.y
+            );
+            
+            view.Move(
+                movePosition
             );
         }
 

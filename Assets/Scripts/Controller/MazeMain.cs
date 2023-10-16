@@ -89,12 +89,7 @@ namespace GillBates.Controller
             );
             
             var mouseView = Instantiate(
-                mousePrefab,
-                new Vector3(
-                    beginPosition.x,
-                    maze.Size.y - beginPosition.y
-                ),
-                Quaternion.identity
+                mousePrefab
             );
 
             mouse = new MouseController();
