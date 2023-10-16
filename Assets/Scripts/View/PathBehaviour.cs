@@ -11,15 +11,8 @@ namespace GillBates.View
         [SerializeField]
         Gradient cheesePowerGradient;
         
-        int cheesePowerMax;
-        
-        public void Initialize(
-            Node node,
-            int cheesePowerMax
-        )
+        public void Initialize(Node node)
         {
-            this.cheesePowerMax = cheesePowerMax;
-
             pathRenderer.sharedMaterial = new Material(pathRenderer.sharedMaterial);
             
             node.CheesePowerUpdate += OnCheesePowerUpdate;
@@ -30,7 +23,7 @@ namespace GillBates.View
             int cheesePower
         )
         {
-            var normal = cheesePower / (float)cheesePowerMax;
+            var normal = cheesePower / (float)PersistantData.CheesePower.Value;
             
             pathRenderer.sharedMaterial.color = cheesePowerGradient.Evaluate(
                 normal

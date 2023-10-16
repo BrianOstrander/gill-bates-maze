@@ -1,3 +1,4 @@
+using GillBates.Data;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -22,6 +23,7 @@ namespace GillBates.Controller
         public void OnClickContinue()
         {
             canvas.SetActive(false);
+            PersistantData.IsFirstLoad.Value = true;
             SceneManager.LoadScene(restartSceneIndex);
         }
     }

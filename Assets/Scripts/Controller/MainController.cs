@@ -3,6 +3,7 @@ using GillBates.Data;
 using GillBates.View;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 namespace GillBates.Controller
 {
@@ -20,7 +21,7 @@ namespace GillBates.Controller
         /// our poor mouse won't find the cheese!
         /// </summary>
         [SerializeField]
-        int cheesePowerMax;
+        int cheesePowerDefault;
         
         [SerializeField]
         GameObject wallPrefab;
@@ -45,6 +46,12 @@ namespace GillBates.Controller
         
         [SerializeField]
         int restartSceneIndex;
+
+        [SerializeField]
+        Slider cheesePowerSlider;
+
+        [SerializeField]
+        Text cheesePowerValueLabel;
         
         /// <summary>
         /// How long to weight between ticks of the simulation. Setting this to zero will update it every frame.
@@ -57,6 +64,8 @@ namespace GillBates.Controller
         Vector2Int endPosition;
         bool isDefaultInput;
         float tickDelayRemaining;
+        int lastCheesePower;
+        int? framesUntilCheesePowerUpdate;
 
         MouseController mouse;
 
@@ -67,13 +76,28 @@ namespace GillBates.Controller
             
             var input = defaultInput;
             isDefaultInput = true;
-            
-            if (PersistantData.IsLoadingFromCache.Value)
+
+            if (PersistantData.IsFirstLoad.Value)
             {
+                // This is the first time we're loading. So lets reset everything in case we previously crashed
+                // or the user force quit at a weird time.
+                PersistantData.IsLoadingFromCache.Value = false;
+                PersistantData.CheesePower.Value = cheesePowerDefault;
+                
+                PersistantData.IsFirstLoad.Value = false;
+            }
+            else if (PersistantData.IsLoadingFromCache.Value)
+            {
+                // We have been restarted and are supposed to parse a maze.
+                
                 input = PersistantData.CachedMaze.Value;
                 PersistantData.IsLoadingFromCache.Value = false;
                 isDefaultInput = false;
             }
+
+            lastCheesePower = PersistantData.CheesePower.Value;
+            cheesePowerValueLabel.text = PersistantData.CheesePower.Value.ToString("N0");
+            cheesePowerSlider.value = PersistantData.CheesePower.Value;
 
             try
             {
@@ -185,16 +209,24 @@ namespace GillBates.Controller
                 Quaternion.identity
             );
 
-            node.CheesePower = node.Position == endPosition ? cheesePowerMax : 0;
+            node.CheesePower = node.Position == endPosition ? PersistantData.CheesePower.Value : 0;
             
-            instance.Initialize(
-                node,
-                cheesePowerMax
-            );
+            instance.Initialize(node);
         }
 
         void Update()
         {
+            if (framesUntilCheesePowerUpdate.HasValue)
+            {
+                framesUntilCheesePowerUpdate--;
+
+                if (framesUntilCheesePowerUpdate == 0)
+                {
+                    framesUntilCheesePowerUpdate = null;
+                    ResetCheesePower();
+                }
+            }
+            
             tickDelayRemaining -= Time.deltaTime;
 
             if (0f < tickDelayRemaining)
@@ -227,6 +259,24 @@ namespace GillBates.Controller
             
             mouse.Tick();
         }
+
+        /// <summary>
+        /// Go through all non-solid nodes and set their cheese power to zero if not the end position, or to the
+        /// cheese power if they are the end position.
+        /// </summary>
+        void ResetCheesePower()
+        {
+            for (var y = 0; y < maze.Size.y; y++)
+            {
+                for (var x = 0; x < maze.Size.x; x++)
+                {
+                    if (maze.TryGetNode(new Vector2Int(x, y), out var node))
+                    {
+                        node.CheesePower = node.Position == endPosition ? PersistantData.CheesePower.Value : 0;
+                    }
+                }
+            }
+        }
         
         public void OnClickRestart()
         {
@@ -245,6 +295,27 @@ namespace GillBates.Controller
         {
             controlPanel.SetActive(false);
             SceneManager.LoadScene(restartSceneIndex);
+        }
+
+        public void OnClickCheesePowerReset()
+        {
+            OnUpdateCheesePower(cheesePowerDefault);
+        }
+
+        public void OnUpdateCheesePower(float floatValue)
+        {
+            var value = Mathf.FloorToInt(floatValue);
+
+            if (value == lastCheesePower)
+            {
+                return;
+            }
+
+            lastCheesePower = value;
+            PersistantData.CheesePower.Value = value;
+            cheesePowerValueLabel.text = value.ToString("N0");
+            
+            framesUntilCheesePowerUpdate = 15;
         }
 
         void OnError()
