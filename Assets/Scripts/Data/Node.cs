@@ -43,10 +43,46 @@ namespace GillBates.Data
 
         public void Tick()
         {
+            if (IsSolid)
+            {
+                return;
+            }
+
+            var maximumNeighborCheesePower = GetMaximumNeighborCheesePower(
+                Directions.Up,
+                Directions.Right,
+                Directions.Down,
+                Directions.Left
+            );
             
+            // Cheese power falls off over distances, so either we are the highest cheese power of our neighbors, or 
+            // one of our neighbors has a higher cheese power than us.
+            
+            CheesePower = Mathf.Max(
+                CheesePower,
+                maximumNeighborCheesePower - 1
+            );
         }
         
-        public bool TryGetNeighbor(
+        int GetMaximumNeighborCheesePower(params Directions[] directions)
+        {
+            var result = 0;
+            
+            for (var i = 0; i < directions.Length; i++)
+            {
+                if (TryGetNeighbor(directions[i], out var neighbor))
+                {
+                    result = Mathf.Max(
+                        result,
+                        neighbor.CheesePower
+                    );
+                }
+            }
+
+            return result;
+        }
+        
+        bool TryGetNeighbor(
             Directions direction,
             out Node neighbor
         )

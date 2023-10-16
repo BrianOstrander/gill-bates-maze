@@ -28,9 +28,13 @@ namespace GillBates.Controller
         [SerializeField]
         Transform cameraRoot;
 
+        [SerializeField]
+        float tickDelay;
+        
         Maze maze;
         Vector2Int beginPosition;
         Vector2Int endPosition;
+        float tickDelayRemaining;
         
         void Awake()
         {
@@ -119,12 +123,37 @@ namespace GillBates.Controller
                 ),
                 Quaternion.identity
             );
+
+            node.CheesePower = node.Position == endPosition ? cheesePowerMax : 0;
             
             instance.Initialize(
                 node,
-                node.Position == endPosition ? cheesePowerMax : 0,
                 cheesePowerMax
             );
+        }
+
+        void Update()
+        {
+            tickDelayRemaining -= Time.deltaTime;
+
+            if (0f < tickDelayRemaining)
+            {
+                return;
+            }
+
+            tickDelayRemaining = tickDelay;
+            Tick();
+        }
+
+        void Tick()
+        {
+            for (var y = 0; y < maze.Nodes.Count; y++)
+            {
+                for (var x = 0; x < maze.Nodes[y].Count; x++)
+                {
+                    maze.Nodes[y][x].Tick();
+                }
+            }
         }
     }
 }

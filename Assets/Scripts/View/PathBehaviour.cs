@@ -16,7 +16,6 @@ namespace GillBates.View
         
         public void Initialize(
             Node node,
-            int cheesePower,
             int cheesePowerMax
         )
         {
@@ -25,7 +24,7 @@ namespace GillBates.View
             pathRenderer.sharedMaterial = new Material(pathRenderer.sharedMaterial);
             
             node.CheesePowerUpdate += OnCheesePowerUpdate;
-            OnCheesePowerUpdate(cheesePower);
+            OnCheesePowerUpdate(node.CheesePower);
         }
 
         void OnCheesePowerUpdate(
