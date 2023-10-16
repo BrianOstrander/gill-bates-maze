@@ -23,7 +23,7 @@ namespace GillBates.Controller
         GameObject cheesePrefab;
         
         [SerializeField]
-        GameObject mousePrefab;
+        MouseBehaviour mousePrefab;
 
         [SerializeField]
         Transform cameraRoot;
@@ -35,6 +35,8 @@ namespace GillBates.Controller
         Vector2Int beginPosition;
         Vector2Int endPosition;
         float tickDelayRemaining;
+
+        MouseController mouse;
         
         void Awake()
         {
@@ -50,8 +52,8 @@ namespace GillBates.Controller
             );
 
             endPosition = new Vector2Int(
-                maze.Nodes[0].Count - 1,
-                maze.Nodes.Count - 2
+                maze.Size.x - 1,
+                maze.Size.y - 2
             );
             
             cameraRoot.position = new Vector3(
@@ -60,9 +62,9 @@ namespace GillBates.Controller
                 cameraRoot.position.z
             );
             
-            for (var y = 0; y < maze.Nodes.Count; y++)
+            for (var y = 0; y < maze.Size.y; y++)
             {
-                for (var x = 0; x < maze.Nodes[y].Count; x++)
+                for (var x = 0; x < maze.Size.x; x++)
                 {
                     var current = maze.Nodes[y][x];
 
@@ -77,22 +79,29 @@ namespace GillBates.Controller
                 }
             }
 
-            var cheeseInstance = Instantiate(
+            var cheeseView = Instantiate(
                 cheesePrefab,
                 new Vector3(
                     endPosition.x,
-                    maze.Nodes.Count - endPosition.y
+                    maze.Size.y - endPosition.y
                 ),
                 Quaternion.identity
             );
             
-            var mouseInstance = Instantiate(
+            var mouseView = Instantiate(
                 mousePrefab,
                 new Vector3(
                     beginPosition.x,
-                    maze.Nodes.Count - beginPosition.y
+                    maze.Size.y - beginPosition.y
                 ),
                 Quaternion.identity
+            );
+
+            mouse = new MouseController();
+            mouse.Initialize(
+                maze,
+                beginPosition,
+                mouseView
             );
         }
 
@@ -104,7 +113,7 @@ namespace GillBates.Controller
                 wallPrefab,
                 new Vector3(
                     node.Position.x,
-                    maze.Nodes.Count - node.Position.y
+                    maze.Size.y - node.Position.y
                 ),
                 Quaternion.identity
             );
@@ -118,7 +127,7 @@ namespace GillBates.Controller
                 pathPrefab,
                 new Vector3(
                     node.Position.x,
-                    maze.Nodes.Count - node.Position.y,
+                    maze.Size.y - node.Position.y,
                     1
                 ),
                 Quaternion.identity
@@ -147,13 +156,15 @@ namespace GillBates.Controller
 
         void Tick()
         {
-            for (var y = 0; y < maze.Nodes.Count; y++)
+            for (var y = 0; y < maze.Size.y; y++)
             {
-                for (var x = 0; x < maze.Nodes[y].Count; x++)
+                for (var x = 0; x < maze.Size.x; x++)
                 {
                     maze.Nodes[y][x].Tick();
                 }
             }
+            
+            mouse.Tick();
         }
     }
 }

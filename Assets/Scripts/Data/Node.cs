@@ -82,7 +82,7 @@ namespace GillBates.Data
             return result;
         }
         
-        bool TryGetNeighbor(
+        public bool TryGetNeighbor(
             Directions direction,
             out Node neighbor
         )
@@ -131,7 +131,7 @@ namespace GillBates.Data
                 return false;
             }
             
-            if (maze.Nodes.Count <= neighborPosition.y)
+            if (maze.Size.y <= neighborPosition.y)
             {
                 return false;
             }
