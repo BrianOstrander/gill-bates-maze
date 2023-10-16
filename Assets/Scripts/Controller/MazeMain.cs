@@ -1,4 +1,3 @@
-using System;
 using GillBates.Data;
 using GillBates.View;
 using UnityEngine;
@@ -12,10 +11,22 @@ namespace GillBates.Controller
         string textInput;
 
         [SerializeField]
+        int cheesePowerMax;
+        
+        [SerializeField]
         GameObject wallPrefab;
         
         [SerializeField]
         PathBehaviour pathPrefab;
+        
+        [SerializeField]
+        GameObject cheesePrefab;
+        
+        [SerializeField]
+        GameObject mousePrefab;
+
+        [SerializeField]
+        Transform cameraRoot;
 
         Maze maze;
         Vector2Int beginPosition;
@@ -39,6 +50,12 @@ namespace GillBates.Controller
                 maze.Nodes.Count - 2
             );
             
+            cameraRoot.position = new Vector3(
+                endPosition.x / 2f,
+                endPosition.y / 2f,
+                cameraRoot.position.z
+            );
+            
             for (var y = 0; y < maze.Nodes.Count; y++)
             {
                 for (var x = 0; x < maze.Nodes[y].Count; x++)
@@ -55,6 +72,24 @@ namespace GillBates.Controller
                     }
                 }
             }
+
+            var cheeseInstance = Instantiate(
+                cheesePrefab,
+                new Vector3(
+                    endPosition.x,
+                    maze.Nodes.Count - endPosition.y
+                ),
+                Quaternion.identity
+            );
+            
+            var mouseInstance = Instantiate(
+                mousePrefab,
+                new Vector3(
+                    beginPosition.x,
+                    maze.Nodes.Count - beginPosition.y
+                ),
+                Quaternion.identity
+            );
         }
 
         void InstantiateWall(
@@ -83,6 +118,12 @@ namespace GillBates.Controller
                     1
                 ),
                 Quaternion.identity
+            );
+            
+            instance.Initialize(
+                node,
+                node.Position == endPosition ? cheesePowerMax : 0,
+                cheesePowerMax
             );
         }
     }

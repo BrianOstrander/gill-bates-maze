@@ -10,8 +10,25 @@ namespace GillBates.Data
         
         public Vector2Int Position { get; private set; }
         public bool IsSolid { get; private set; }
-        
 
+        int cheesePower;
+        public int CheesePower
+        {
+            get => cheesePower;
+            set
+            {
+                if (cheesePower == value)
+                {
+                    return;
+                }
+
+                cheesePower = value;
+                CheesePowerUpdate?.Invoke(value);
+            }
+        }
+
+        public event Action<int> CheesePowerUpdate;
+        
         public Node(
             Maze maze,
             Vector2Int position,
@@ -22,6 +39,11 @@ namespace GillBates.Data
             
             Position = position;
             IsSolid = isSolid;
+        }
+
+        public void Tick()
+        {
+            
         }
         
         public bool TryGetNeighbor(
