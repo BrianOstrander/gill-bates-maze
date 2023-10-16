@@ -111,6 +111,7 @@ namespace GillBates.Controller
             mouse.Initialize(
                 maze,
                 beginPosition,
+                endPosition,
                 mouseView
             );
         }

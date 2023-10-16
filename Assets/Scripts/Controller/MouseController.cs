@@ -9,16 +9,19 @@ namespace GillBates.Controller
     {
         Maze maze;
         Vector2Int position;
+        Vector2Int endPosition;
         MouseBehaviour view;
         
         public void Initialize(
             Maze maze,
             Vector2Int beginPosition,
+            Vector2Int endPosition,
             MouseBehaviour view
         )
         {
             this.maze = maze;
             position = beginPosition;
+            this.endPosition = endPosition;
             this.view = view;
             
             var beginPositionWorld = new Vector3(
@@ -62,6 +65,11 @@ namespace GillBates.Controller
             view.Move(
                 movePosition
             );
+
+            if (position == endPosition)
+            {
+                view.BeginChewing();
+            }
         }
 
         /// <summary>
